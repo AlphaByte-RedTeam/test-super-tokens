@@ -1,45 +1,49 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import React, { FC } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
+import * as reactRouterDom from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import ThirdPartyEmailPassword, { Github, Google, Facebook, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Session from "supertokens-auth-react/recipe/session";
 
+// Super Tokens API Documentation: https://supertokens.com/docs/thirdpartyemailpassword/quick-setup/frontend
+
+SuperTokens.init({
+  appInfo: {
+    appName: "test-super-tokens",
+    apiDomain: "http://localhost:8080",
+    websiteDomain: "http://localhost:3000",
+    apiBasePath: "/auth",
+    websiteBasePath: "/auth",
+  },
+  recipeList: [
+    ThirdPartyEmailPassword.init({
+      signInAndUpFeature: {
+        providers: [
+          Github.init(),
+          Google.init(),
+          Facebook.init(),
+          Apple.init(),
+        ]
+      }
+    }),
+    Session.init()
+  ]
+})
+
+const App: FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {getSuperTokensRoutesForReactRouterDom(reactRouterDom)}
+      </Routes>
+    </BrowserRouter>
   )
 }
 
-export default App
+export default App;
